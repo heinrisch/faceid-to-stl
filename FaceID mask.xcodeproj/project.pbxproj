@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		80C92C111FBB9C0100BA93FE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C92C101FBB9C0100BA93FE /* AppDelegate.swift */; };
-		80C92C131FBB9C0100BA93FE /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 80C92C121FBB9C0100BA93FE /* art.scnassets */; };
 		80C92C151FBB9C0100BA93FE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C92C141FBB9C0100BA93FE /* ViewController.swift */; };
 		80C92C181FBB9C0100BA93FE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 80C92C161FBB9C0100BA93FE /* Main.storyboard */; };
 		80C92C1A1FBB9C0100BA93FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 80C92C191FBB9C0100BA93FE /* Assets.xcassets */; };
@@ -18,7 +17,6 @@
 /* Begin PBXFileReference section */
 		80C92C0D1FBB9C0100BA93FE /* FaceID mask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "FaceID mask.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		80C92C101FBB9C0100BA93FE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		80C92C121FBB9C0100BA93FE /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
 		80C92C141FBB9C0100BA93FE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		80C92C171FBB9C0100BA93FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		80C92C191FBB9C0100BA93FE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -57,7 +55,6 @@
 			isa = PBXGroup;
 			children = (
 				80C92C101FBB9C0100BA93FE /* AppDelegate.swift */,
-				80C92C121FBB9C0100BA93FE /* art.scnassets */,
 				80C92C141FBB9C0100BA93FE /* ViewController.swift */,
 				80C92C161FBB9C0100BA93FE /* Main.storyboard */,
 				80C92C191FBB9C0100BA93FE /* Assets.xcassets */,
@@ -126,7 +123,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				80C92C131FBB9C0100BA93FE /* art.scnassets in Resources */,
 				80C92C1D1FBB9C0100BA93FE /* LaunchScreen.storyboard in Resources */,
 				80C92C1A1FBB9C0100BA93FE /* Assets.xcassets in Resources */,
 				80C92C181FBB9C0100BA93FE /* Main.storyboard in Resources */,
@@ -278,12 +274,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 53P6LCFG2E;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "FaceID mask/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.simonwesterlund.FaceID-mask";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.faceid-to-stl";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -293,12 +291,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 53P6LCFG2E;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "FaceID mask/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.simonwesterlund.FaceID-mask";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.faceid-to-stl";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

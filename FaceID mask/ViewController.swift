@@ -1,80 +1,115 @@
-//
-//  ViewController.swift
-//  FaceID mask
-//
-//  Created by Simon Westerlund on 2017-11-14.
-//  Copyright © 2017 Simon Westerlund. All rights reserved.
-//
-
 import UIKit
 import SceneKit
 import ARKit
 
+protocol VirtualFaceContent {
+    func update(withFaceAnchor: ARFaceAnchor)
+}
+
+typealias VirtualFaceNode = VirtualFaceContent & SCNNode
+
+class Mask: SCNNode, VirtualFaceContent {
+
+    init(geometry: ARSCNFaceGeometry) {
+        let material = geometry.firstMaterial!
+
+        material.diffuse.contents = UIColor.lightGray
+        material.lightingModel = .physicallyBased
+
+        super.init()
+        self.geometry = geometry
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("\(#function) has not been implemented")
+    }
+
+    func update(withFaceAnchor anchor: ARFaceAnchor) {
+        let faceGeometry = geometry as! ARSCNFaceGeometry
+        faceGeometry.update(from: anchor.geometry)
+    }
+}
+
 class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
+    private var isPresentingShareSheet = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Set the view's delegate
+
         sceneView.delegate = self
-        
-        // Show statistics such as fps and timing information
-        sceneView.showsStatistics = true
-        
-        // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
-        
-        // Set the scene to the view
-        sceneView.scene = scene
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        // Create a session configuration
-        let configuration = ARWorldTrackingConfiguration()
-
-        // Run the view's session
-        sceneView.session.run(configuration)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        // Pause the view's session
-        sceneView.session.pause()
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Release any cached data, images, etc that aren't in use.
+        startSession()
     }
 
-    // MARK: - ARSCNViewDelegate
-    
-/*
-    // Override to create and configure nodes for anchors added to the view's session.
-    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-        let node = SCNNode()
-     
-        return node
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        let device = sceneView.device!
+        let maskGeometry = ARSCNFaceGeometry(device: device)!
+        let mask = Mask(geometry: maskGeometry)
+
+        node.addChildNode(mask)
+
     }
-*/
-    
-    func session(_ session: ARSession, didFailWithError error: Error) {
-        // Present an error message to the user
-        
+
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        if let faceAnchor = anchor as? ARFaceAnchor, !isPresentingShareSheet {
+            let data = createSTL(from: faceAnchor)
+            let url = generateURL(for: data)
+            presentShareSheet(with: url)
+        }
     }
-    
-    func sessionWasInterrupted(_ session: ARSession) {
-        // Inform the user that the session has been interrupted, for example, by presenting an overlay
-        
+
+    private func startSession() {
+        sceneView.scene.rootNode.childNodes.forEach {
+            $0.removeFromParentNode()
+        }
+
+        let configuration = ARFaceTrackingConfiguration()
+        configuration.isLightEstimationEnabled = true
+        sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
     }
-    
-    func sessionInterruptionEnded(_ session: ARSession) {
-        // Reset tracking and/or remove existing anchors if consistent tracking is required
-        
+
+    private func createSTL(from faceAnchor: ARFaceAnchor) -> Data {
+
+        let mapped = faceAnchor.geometry.triangleIndices.map { i in
+            return faceAnchor.geometry.vertices[Int(i)]
+        }
+
+        var out: [String] = ["solid face"]
+        mapped.enumerated().forEach { i, vertex in
+            if i % 3 == 0 {
+                out.append("facet normal 0 0 0")
+                out.append("\touter loop")
+            }
+
+            out.append("\t\tvertex \(vertex.x) \(vertex.y) \(vertex.z)")
+
+            if i % 3 == 2 {
+                out.append("\tendloop")
+            }
+        }
+
+        out.append("endsolid face")
+
+        let file = out.joined(separator: "\n")
+        let data = file.data(using: .ascii)!
+        return data
+    }
+
+    private func generateURL(for data: Data) -> URL {
+        let url = URL(fileURLWithPath: NSTemporaryDirectory() + "face.stl")
+        try! data.write(to: url)
+        return url
+    }
+
+    private func presentShareSheet(with url: URL) {
+        self.isPresentingShareSheet = true
+        DispatchQueue.main.async {
+            let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+            activityViewController.completionWithItemsHandler = { _, _, _, _ in
+                 self.isPresentingShareSheet = false
+            }
+            self.present(activityViewController, animated: true, completion: nil)
+        }
     }
 }
