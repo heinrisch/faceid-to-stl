@@ -34,28 +34,49 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
     private var isPresentingShareSheet = false
+    private var mask: Mask?
+    private var lastFaceAnchor: ARFaceAnchor?
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         sceneView.delegate = self
         startSession()
+
+        let button = UIButton(type: .custom)
+        button.setTitle("Capture", for: .normal)
+        button.tintColor = .black
+        button.titleLabel?.textColor = .black
+        button.backgroundColor = .lightGray
+        button.addTarget(self, action: #selector(capture), for: .touchUpInside)
+        button.layer.cornerRadius = 12
+        view.addSubview(button)
+
+        button.translatesAutoresizingMaskIntoConstraints = false
+        let constraints: [NSLayoutConstraint] = [
+            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            button.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -40),
+            button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            button.heightAnchor.constraint(equalToConstant: 55)
+        ]
+        view.addConstraints(constraints)
     }
 
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         let device = sceneView.device!
         let maskGeometry = ARSCNFaceGeometry(device: device)!
-        let mask = Mask(geometry: maskGeometry)
+        mask = Mask(geometry: maskGeometry)
 
-        node.addChildNode(mask)
+        node.addChildNode(mask!)
 
     }
 
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        if let faceAnchor = anchor as? ARFaceAnchor, !isPresentingShareSheet {
-            let data = createSTL(from: faceAnchor)
-            let url = generateURL(for: data)
-            presentShareSheet(with: url)
+        guard let faceAnchor = anchor as? ARFaceAnchor else { return }
+        mask?.update(withFaceAnchor: faceAnchor)
+
+        if let faceAnchor = anchor as? ARFaceAnchor {
+            lastFaceAnchor = faceAnchor
         }
     }
 
@@ -67,6 +88,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let configuration = ARFaceTrackingConfiguration()
         configuration.isLightEstimationEnabled = true
         sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+    }
+
+    @objc
+    private func capture() {
+        guard let faceAnchor = lastFaceAnchor else {
+            return
+        }
+        
+        let data = createSTL(from: faceAnchor)
+        let url = generateURL(for: data)
+        presentShareSheet(with: url)
     }
 
     private func createSTL(from faceAnchor: ARFaceAnchor) -> Data {
