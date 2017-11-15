@@ -5,7 +5,7 @@ iOS app that uses the face scanning feature of the iPhone X to create a STL file
 
 ## Usage
 - Build the app
-- Run it on your phone
+- Run it on your shiny iPhone X
 - Whenever you're satisfied with the image on screen, tap capture
 - A STL file will be created and presented in a share sheet, push it somewhere nice
 - Use something like [Free online STL viewer](https://www.viewstl.com/) to look at the result
