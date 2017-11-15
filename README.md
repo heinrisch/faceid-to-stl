@@ -1,5 +1,5 @@
 # faceid-to-stl
-iOS app that uses the face scanning feature of the iPhone X to create a STL file that can be used for example for 3D printing.
+iOS app that uses the face scanning feature of the iPhone X to create a [STL file](https://en.wikipedia.org/wiki/STL_(file_format)) that can be used for example for 3D printing.
 
 ![Rendered STL](https://i.imgur.com/usQVr7r.png)
 
